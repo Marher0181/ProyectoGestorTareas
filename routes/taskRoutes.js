@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const task = require("../models/taksModel");
+const verificarTokenYRol = require('../middlewares/middlewaresauth');
 
 router.post('/', async (req, res) => {
   res.send('Hello world!');
 });
 
-
-router.post('/add', verificarTokenYRol('Administrador Dept'), async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { nombre, descripcion, progresion, fechaFinalizacion, departmentId } = req.body;
 
@@ -25,6 +25,9 @@ router.post('/add', verificarTokenYRol('Administrador Dept'), async (req, res) =
     });
 
     const savedTask = await task.save();
+
+    io.emit('task-created', savedTask);
+
     return res.status(201).json({ task: savedTask });
   } catch (error) {
     console.error(error);
@@ -87,7 +90,7 @@ router.get('/:id', verificarTokenYRol('Administrador Dept'), async (req, res) =>
   }
 });
 
-router.put('update/:id', verificarTokenYRol('Administrador Dept'), async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const { nombre, descripcion, progresion, fechaFinalizacion, departmentId } = req.body;
 
@@ -101,6 +104,8 @@ router.put('update/:id', verificarTokenYRol('Administrador Dept'), async (req, r
       return res.status(404).json({ message: 'Tarea no encontrada' });
     }
 
+    io.emit('task-updated', updatedTask);
+
     return res.status(200).json({ task: updatedTask });
   } catch (error) {
     console.error(error);
@@ -108,13 +113,15 @@ router.put('update/:id', verificarTokenYRol('Administrador Dept'), async (req, r
   }
 });
 
-router.delete('delete/:id', verificarTokenYRol('Administrador Dept'), async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const deletedTask = await taskModel.findByIdAndDelete(req.params.id);
 
     if (!deletedTask) {
       return res.status(404).json({ message: 'Tarea no encontrada' });
     }
+
+    io.emit('task-deleted', deletedTask);
 
     return res.status(200).json({ message: 'Tarea eliminada exitosamente' });
   } catch (error) {
