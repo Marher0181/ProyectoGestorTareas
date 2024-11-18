@@ -35,7 +35,7 @@ router.post('/add', async (req, res) => {
   }
 });
 
-router.get('/', verificarTokenYRol('Administrador Dept'), async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const tasks = await taskModel.find().populate('Department');
     return res.status(200).json({ tasks });
@@ -75,7 +75,7 @@ router.post('/assign-task', async (req, res) => {
   }
 });
 
-router.get('/:id', verificarTokenYRol('Administrador Dept'), async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const task = await taskModel.findById(req.params.id).populate('Department');
     
@@ -90,7 +90,7 @@ router.get('/:id', verificarTokenYRol('Administrador Dept'), async (req, res) =>
   }
 });
 
-router.put('update/:id', async (req, res) => {
+router.put('/update/:id', verificarTokenYRol('Administrador Dept'), async (req, res) => {
   try {
     const { nombre, descripcion, progresion, fechaFinalizacion, departmentId } = req.body;
 
@@ -113,7 +113,7 @@ router.put('update/:id', async (req, res) => {
   }
 });
 
-router.delete('delete/:id', async (req, res) => {
+router.delete('/delete/:id', verificarTokenYRol('Administrador Dept'), async (req, res) => {
   try {
     const deletedTask = await taskModel.findByIdAndDelete(req.params.id);
 
