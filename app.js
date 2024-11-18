@@ -11,9 +11,8 @@ const taskRoutes = require("./routes/taskRoutes");
 
 app.use(express.json());
 const server = http.createServer(app); 
-const io = socketIo(server);  // Configura socket.io
+const io = socketIo(server); 
 
-// Define la conexión WebSocket
 io.on('connection', (socket) => {
   console.log(`Nuevo cliente conectado: ${socket.id}`);
 
