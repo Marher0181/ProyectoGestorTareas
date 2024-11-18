@@ -249,7 +249,7 @@ router.post('/login', async (req, res) => {
     }
 
     const jwt = require('jsonwebtoken');
-    const token = jwt.sign({ id: employee._id, nombre: employee.nombre, rol: employee.rol }, 'gestor_app_project', { expiresIn: '8h' });
+    const token = jwt.sign({ id: employee._id, nombre: employee.nombre, rol: employee.rol, Department: employee.Department }, 'gestor_app_project', { expiresIn: '8h' });
 
     return res.status(200).json({ message: 'Login exitoso', token });
     

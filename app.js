@@ -8,8 +8,12 @@ const organizationRoutes = require("./routes/organizationRoutes");
 const departmentRoutes = require("./routes/departmentRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
 const taskRoutes = require("./routes/taskRoutes");
+const cors = require('cors');
 
 app.use(express.json());
+
+app.use(cors());  
+
 const server = http.createServer(app); 
 const io = socketIo(server); 
 
