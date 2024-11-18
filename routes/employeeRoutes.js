@@ -4,7 +4,6 @@ const { employeeModel } = require('../models/employeeModel');
 const { organizationModel } = require('../models/organizationModel');
 const { departmentModel } = require('../models/departmentModel');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const verificarTokenYRol = require('../middlewares/middlewaresauth');
 
 router.post('/', async (req, res) => {
@@ -91,7 +90,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.post('/newAdminDept', verificarTokenYRol('Administrador Dept'), async (req, res) => {
+router.post('/newAdminDept', verificarTokenYRol('Administrador Dept' || 'Administrador Org'), async (req, res) => {
   try {
     const { nombre, pass, email } = req.body;
 
@@ -131,7 +130,7 @@ router.post('/newAdminDept', verificarTokenYRol('Administrador Dept'), async (re
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', verificarTokenYRol('Administrador Dept'), async (req, res) => {
   try {
     const employees = await employeeModel.find().populate('Department', 'nombre codigo');
 
@@ -147,7 +146,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', verificarTokenYRol('Administrador Dept'), async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -165,7 +164,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put('/update/:id', async (req, res) => {
+router.put('/update/:id', verificarTokenYRol('Administrador Dept'), async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre, rol, pass, email, codigo } = req.body;
@@ -212,7 +211,7 @@ router.put('/update/:id', async (req, res) => {
   }
 });
 
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id', verificarTokenYRol('Administrador Dept'), async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -250,7 +249,7 @@ router.post('/login', async (req, res) => {
     }
 
     const jwt = require('jsonwebtoken');
-    const token = jwt.sign({ id: employee._id, nombre: employee.nombre, rol: employee.rol }, 'tu_secreto_aqui', { expiresIn: '1h' });
+    const token = jwt.sign({ id: employee._id, nombre: employee.nombre, rol: employee.rol }, 'gestor_app_project', { expiresIn: '8h' });
 
     return res.status(200).json({ message: 'Login exitoso', token });
     

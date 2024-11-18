@@ -3,12 +3,14 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const { organizationModel } = require('../models/organizationModel');
 const { departmentModel } = require('../models/departmentModel');
+const verificarTokenYRol = require('../middlewares/middlewaresauth');
+
 
 router.post('/', async (req, res) => {
   res.send('Hello world from Department!');
 });
 
-router.post('/add', async (req, res) => {
+router.post('/add', verificarTokenYRol('Administrador Org'), async (req, res) => {
   try {
     const { nombre, codigo, codigoOrg } = req.body;
 
@@ -38,7 +40,7 @@ router.post('/add', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', verificarTokenYRol('Administrador Org'), async (req, res) => {
   try {
     const departments = await departmentModel.find({ eliminado: false }).populate('Organization', 'nombre codigo');
 
@@ -54,7 +56,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.put('/update/:id', async (req, res) => {
+router.put('/update/:id', verificarTokenYRol('Administrador Org'), async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre, codigo } = req.body;
@@ -88,7 +90,7 @@ router.put('/update/:id', async (req, res) => {
   }
 });
 
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id', verificarTokenYRol('Administrador Org'), async (req, res) => {
   try {
     const { id } = req.params;
 

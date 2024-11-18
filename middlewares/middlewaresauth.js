@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const verificarTokenYRol = (requiredRole) => {
   return (req, res, next) => {
+    console.log("Verificando Token")
     const token = req.headers['authorization']?.split(' ')[1];
 
     if (!token) {
@@ -9,8 +10,8 @@ const verificarTokenYRol = (requiredRole) => {
     }
 
     try {
-      const decoded = jwt.verify(token, 'tu_secreto_aqui');
-
+      const decoded = jwt.verify(token, 'gestor_app_project');
+      console.log(decoded)
       req.user = decoded;
 
       if (requiredRole && req.user.rol !== requiredRole) {

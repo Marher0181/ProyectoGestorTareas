@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { organizationModel } = require('../models/organizationModel');
+const verificarTokenYRol = require('../middlewares/middlewaresauth');
 
 router.post('/', (req, res) => {
   res.send('Hello world from Organization!');
 });
 
-router.post('/add', async (req, res) => {
+router.post('/add', verificarTokenYRol('Administrador App'), async (req, res) => {
   try {
     const { nombre, tipo, codigo } = req.body;
     console.log(req.body);
@@ -35,7 +36,36 @@ router.post('/add', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.post('/registerOrg', verificarTokenYRol('Administrador App'), async (req, res) => {
+  try {
+    const { nombre, tipo, codigo } = req.body;
+    console.log(req.body);
+    if (!nombre || !tipo || !codigo) {
+      return res.status(400).json({ message: 'Hace falta un campo, por favor, rellene todos correctamente' });
+    }
+
+    const existingOrganization = await organizationModel.findOne({ codigo });
+    if (existingOrganization) {
+      return res.status(400).json({ message: 'Ya existe una organización con ese código' });
+    }
+    
+    const organization = new organizationModel({
+      nombre,
+      tipo,
+      codigo,
+      eliminado: false 
+    });
+
+    const savedOrganization = await organization.save();
+    return res.status(201).json({ organization: savedOrganization });
+
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+  }
+});
+
+router.get('/', verificarTokenYRol('Administrador Org'), async (req, res) => {
   try {
     const organizations = await organizationModel.find({ eliminado: false });
 
@@ -51,7 +81,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.put('/update/:id', async (req, res) => {
+router.put('/update/:id', verificarTokenYRol('Administrador Org'), async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre, tipo, codigo } = req.body;
@@ -85,7 +115,7 @@ router.put('/update/:id', async (req, res) => {
   }
 });
 
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id', verificarTokenYRol('Administrador Org'), async (req, res) => {
   try {
     const { id } = req.params;
 
