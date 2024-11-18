@@ -8,7 +8,7 @@ router.post('/', async (req, res) => {
   res.send('Hello world!');
 });
 
-router.post('/', async (req, res) => {
+router.post('/add', async (req, res) => {
   try {
     const { nombre, descripcion, progresion, fechaFinalizacion, departmentId } = req.body;
 
@@ -90,7 +90,7 @@ router.get('/:id', verificarTokenYRol('Administrador Dept'), async (req, res) =>
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('update/:id', async (req, res) => {
   try {
     const { nombre, descripcion, progresion, fechaFinalizacion, departmentId } = req.body;
 
@@ -113,7 +113,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('delete/:id', async (req, res) => {
   try {
     const deletedTask = await taskModel.findByIdAndDelete(req.params.id);
 
