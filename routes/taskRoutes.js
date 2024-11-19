@@ -111,6 +111,28 @@ router.post('/add', async (req, res) => {
     }
   });
 
+  router.put('/updateStatusCancelled',  async (req, res) => {
+    try {
+
+      const updatedTask = await taskModel.findByIdAndUpdate(
+        req.body.id,
+        { progresion: "Cancelado"},
+        { new: true }
+      ).populate('Department');
+
+      if (!updatedTask) {
+        return res.status(404).json({ message: 'Tarea no encontrada' });
+      }
+
+      io.emit('task-updated', updatedTask);
+
+      return res.status(200).json({ task: updatedTask });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error al cambiar la progresión de la tarea', error: error.message });
+    }
+  });
+
   router.put('/updateStatusToDo',  async (req, res) => {
     try {
 
