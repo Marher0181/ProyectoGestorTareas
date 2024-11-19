@@ -4,33 +4,31 @@ const { taskModel } = require("../models/taksModel");
 const verificarTokenYRol = require('../middlewares/middlewaresauth');
 
 module.exports = (io) => {
-  
-  router.post('/add', async (req, res) => {
-    try {
-      const { nombre, descripcion, progresion, fechaFinalizacion, departmentId } = req.body;
-
-      if (!nombre || !descripcion || !progresion || !departmentId) {
-        return res.status(400).json({ message: 'Faltan datos obligatorios' });
-      }
-
-      const task = new taskModel({
-        nombre,
-        descripcion,
-        progresion,
-        fechaFinalizacion,
-        Department: departmentId,
-      });
-
-      const savedTask = await task.save();
-
-      io.emit('task-created', savedTask);
-
-      return res.status(201).json({ task: savedTask });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error al crear la tarea', error: error.message });
+router.post('/add', async (req, res) => {
+  try {
+    const { nombre, descripcion, progresion, fechaFinalizacion, departmentId } = req.body;
+    if (!nombre || !descripcion || !progresion || !departmentId) {
+      return res.status(400).json({ message: 'Faltan datos obligatorios' });
     }
-  });
+
+    const task = new taskModel({
+      nombre,
+      descripcion,
+      progresion,
+      fechaFinalizacion,
+      Department: departmentId,
+    });
+
+    const savedTask = await task.save();
+
+    io.emit('task-created', savedTask);
+
+    return res.status(201).json({ task: savedTask });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error al crear la tarea', error: error.message });
+  }
+});
 
   router.get('/', async (req, res) => {
     try {
@@ -68,7 +66,7 @@ module.exports = (io) => {
     }
   });
 
-  router.put('/update/:id', verificarTokenYRol('Administrador Dept'), async (req, res) => {
+  router.put('/update/:id',  async (req, res) => {
     try {
       const { nombre, descripcion, progresion, fechaFinalizacion, departmentId } = req.body;
 
@@ -91,7 +89,73 @@ module.exports = (io) => {
     }
   });
 
-  router.delete('/delete/:id', verificarTokenYRol('Administrador Dept'), async (req, res) => {
+  router.put('/updateStatusInProgress',  async (req, res) => {
+    try {
+
+      const updatedTask = await taskModel.findByIdAndUpdate(
+        req.body.id,
+        { progresion: "En proceso"},
+        { new: true }
+      ).populate('Department');
+
+      if (!updatedTask) {
+        return res.status(404).json({ message: 'Tarea no encontrada' });
+      }
+
+      io.emit('task-updated', updatedTask);
+
+      return res.status(200).json({ task: updatedTask });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error al cambiar la progresión de la tarea', error: error.message });
+    }
+  });
+
+  router.put('/updateStatusToDo',  async (req, res) => {
+    try {
+
+      const updatedTask = await taskModel.findByIdAndUpdate(
+        req.body.id,
+        { progresion: "No iniciado"},
+        { new: true }
+      ).populate('Department');
+
+      if (!updatedTask) {
+        return res.status(404).json({ message: 'Tarea no encontrada' });
+      }
+
+      io.emit('task-updated', updatedTask);
+
+      return res.status(200).json({ task: updatedTask });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error al cambiar la progresión de la tarea', error: error.message });
+    }
+  });
+
+  router.put('/updateStatusFinished',  async (req, res) => {
+    try {
+
+      const updatedTask = await taskModel.findByIdAndUpdate(
+        req.body.id,
+        { progresion: "Finalizado"},
+        { new: true }
+      ).populate('Department');
+
+      if (!updatedTask) {
+        return res.status(404).json({ message: 'Tarea no encontrada' });
+      }
+
+      io.emit('task-updated', updatedTask);
+
+      return res.status(200).json({ task: updatedTask });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error al cambiar la progresión de la tarea', error: error.message });
+    }
+  });
+
+  router.delete('/delete/:id',  async (req, res) => {
     try {
       const deletedTask = await taskModel.findByIdAndDelete(req.params.id);
 

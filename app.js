@@ -12,10 +12,21 @@ const cors = require('cors');
 
 app.use(express.json());
 
-app.use(cors());  
+app.use(cors({
+  origin: 'http://localhost:3000', // Permite solicitudes desde tu cliente React
+  methods: ['GET', 'POST', 'DELETE'], // Métodos HTTP permitidos
+  allowedHeaders: ['Content-Type'], // Encabezados permitidos
+}));
 
-const server = http.createServer(app); 
-const io = socketIo(server); 
+// Resto de tu configuración de rutas y servidor
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: 'http://localhost:3000', // Permite WebSocket desde tu cliente React
+    methods: ['GET', 'POST'],
+  }
+});
+
 
 io.on('connection', (socket) => {
   console.log(`Nuevo cliente conectado: ${socket.id}`);
