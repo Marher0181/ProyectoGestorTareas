@@ -2,21 +2,23 @@ const express = require('express');
 const router = express.Router();
 const { taskModel } = require("../models/taksModel");
 const verificarTokenYRol = require('../middlewares/middlewaresauth');
+const { departmentModel } = require("../models/departmentModel")
 
 module.exports = (io) => {
 router.post('/add', async (req, res) => {
   try {
-    const { nombre, descripcion, progresion, fechaFinalizacion, departmentId } = req.body;
-    if (!nombre || !descripcion || !progresion || !departmentId) {
+    const { nombre, descripcion, fechaFinalizacion, DepartmentId } = req.body;
+
+    if (!nombre || !descripcion || !DepartmentId) {
       return res.status(400).json({ message: 'Faltan datos obligatorios' });
     }
-
+    const department = await departmentModel.findOne({ _id: DepartmentId});
     const task = new taskModel({
       nombre,
       descripcion,
-      progresion,
+      progresion: "No iniciada",
       fechaFinalizacion,
-      Department: departmentId,
+      Department: department,
     });
 
     const savedTask = await task.save();
@@ -68,11 +70,11 @@ router.post('/add', async (req, res) => {
 
   router.put('/update/:id',  async (req, res) => {
     try {
-      const { nombre, descripcion, progresion, fechaFinalizacion, departmentId } = req.body;
+      const { nombre, descripcion, progresion, fechaFinalizacion, DepartmentId } = req.body;
 
       const updatedTask = await taskModel.findByIdAndUpdate(
         req.params.id,
-        { nombre, descripcion, progresion, fechaFinalizacion, Department: departmentId },
+        { nombre, descripcion, progresion, fechaFinalizacion, Department: DepartmentId },
         { new: true }
       ).populate('Department');
 

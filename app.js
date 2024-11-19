@@ -14,7 +14,7 @@ app.use(express.json());
 
 app.use(cors({
   origin: 'http://localhost:3000', // Permite solicitudes desde tu cliente React
-  methods: ['GET', 'POST', 'DELETE'], // Métodos HTTP permitidos
+  methods: ['GET', 'POST', 'DELETE', 'PUT'], // Métodos HTTP permitidos
   allowedHeaders: ['Content-Type'], // Encabezados permitidos
 }));
 
