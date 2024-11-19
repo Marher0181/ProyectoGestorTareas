@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const taskModel = require("../models/taksModel");
+const { taskModel } = require("../models/taksModel");
 const verificarTokenYRol = require('../middlewares/middlewaresauth');
 
 module.exports = (io) => {
@@ -34,7 +34,7 @@ module.exports = (io) => {
 
   router.get('/', async (req, res) => {
     try {
-      const tasks = await taskModel.find().populate('Department');
+      const tasks = await taskModel.find();
       return res.status(200).json({ tasks });
     } catch (error) {
       console.error(error);
