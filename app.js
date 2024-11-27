@@ -40,6 +40,7 @@ io.on('connection', (socket) => {
 // Instrucciones: Para utilizar las rutas
 // se deben utilizar de esta forma
 // "http://localhost:4000/api/v1/<Ruta objetivo>"
+
 app.use('/api/v1/organization', organizationRoutes);
 app.use('/api/v1/department', departmentRoutes);
 app.use('/api/v1/employee', employeeRoutes);

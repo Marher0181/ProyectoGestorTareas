@@ -233,7 +233,7 @@ router.delete('/delete/:id', verificarTokenYRol('Administrador Dept'), async (re
 router.post('/login', async (req, res) => {
   try {
     const { email, pass } = req.body;
-
+    console.log(req.body);
     if (!email || !pass) {
       return res.status(400).json({ message: 'Email y contraseña son obligatorios' });
     }
@@ -251,7 +251,7 @@ router.post('/login', async (req, res) => {
     const jwt = require('jsonwebtoken');
     const token = jwt.sign({ id: employee._id, nombre: employee.nombre, rol: employee.rol, Department: employee.Department }, 'gestor_app_project', { expiresIn: '8h' });
 
-    return res.status(200).json({ message: 'Login exitoso', token });
+    return res.status(200).json({ message: 'Login exitoso', token, rol: employee.rol });
     
   } catch (error) {
     console.error('Error:', error);
