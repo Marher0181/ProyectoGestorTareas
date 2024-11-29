@@ -132,7 +132,7 @@ router.post('/newAdminDept', verificarTokenYRol('Administrador Dept' || 'Adminis
 
 router.get('/', verificarTokenYRol('Administrador Dept'), async (req, res) => {
   try {
-    const employees = await employeeModel.find().populate('Department', 'nombre codigo');
+    const employees = await employeeModel.find();
 
     if (!employees || employees.length === 0) {
       return res.status(404).json({ message: 'No se encontraron empleados' });
