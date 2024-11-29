@@ -16,7 +16,7 @@ router.post('/add', async (req, res) => {
     const task = new taskModel({
       nombre,
       descripcion,
-      progresion: "No iniciada",
+      progresion: "No iniciado",
       fechaFinalizacion,
       Department: department,
     });
