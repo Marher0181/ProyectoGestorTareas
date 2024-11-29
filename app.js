@@ -9,6 +9,7 @@ const departmentRoutes = require("./routes/departmentRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const cors = require('cors');
+const nodemailer = require('nodemailer');
 
 app.use(express.json());
 
