@@ -130,7 +130,7 @@ router.post('/newAdminDept', verificarTokenYRol('Administrador Dept' || 'Adminis
   }
 });
 
-router.get('/', verificarTokenYRol('Administrador Dept'), async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const employees = await employeeModel.find();
 
